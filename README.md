@@ -1,4 +1,4 @@
-# Developing in-memory cache as a separate library on Github.
+# Developing in-memory cache as a separate library on Github
 
 A separate package that implements an in-memory cache with the following methods:
 
