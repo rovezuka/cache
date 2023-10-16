@@ -1,7 +1,7 @@
 package cache
 
 type Cache struct {
-	cache map[string]interface{}
+	storage map[string]interface{}
 }
 
 func New() *Cache {
@@ -9,13 +9,17 @@ func New() *Cache {
 }
 
 func (c *Cache) Set(key string, value interface{}) {
-	c.cache[key] = value
+	c.storage[key] = value
 }
 
 func (c *Cache) Get(key string) interface{} {
-	return c.cache[key]
+	value, ok := c.storage[key]
+	if ok {
+		return value
+	}
+	return ok
 }
 
 func (c *Cache) Delete(key string) {
-	delete(c.cache, key)
+	delete(c.storage, key)
 }
