@@ -2,9 +2,11 @@
 
 A separate package that implements an in-memory cache with the following methods:
 
-- `Set(key string, value interface{})` - writing the `value` to the cache by the `key`
-- `Get(key string)`
-- `Delete(key)`
+- `Set(key string, val any, ttl time.Duration)` - writing the `value` to the cache by the `key` with Time-To-Live
+
+- `Get(key string) (any, error)`
+
+- `Delete(key string)`
 
 ## Usage
 
@@ -14,22 +16,23 @@ You can install the package into your project using:
 ### Example
 ```
 func main() {
-        // Instance creation
+	// Instance creation
 	cache := cache.New()
 
-        // Writing a value by key
-	cache.Set("userId", 42)
+	// Writing a value by key
+	cache.Set("userId", 42, time.Second*5)
 
-        // Getting value by key
-	userId := cache.Get("userId")
+	// Getting value by key
+	userID, _ := cache.Get("userId")
 
-	fmt.Println(userId)
+	fmt.Println(userID)
 
-        // Deleting a value by key
-	cache.Delete("userId")
-	userId := cache.Get("userId")
+	// Waiting for the time of life to run out
+	time.Sleep(time.Second * 6)
 
-	fmt.Println(userId)
+	userID, _ = cache.Get("userId")
+
+	fmt.Println(userID)
 }
 ```
 
