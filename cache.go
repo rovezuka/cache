@@ -3,6 +3,7 @@ package cache
 import (
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -13,6 +14,7 @@ type value struct {
 
 type Cache struct {
 	storage map[string]value
+	mu      sync.Mutex
 }
 
 func New() *Cache {
@@ -20,6 +22,9 @@ func New() *Cache {
 }
 
 func (c *Cache) Set(key string, val any, ttl time.Duration) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	c.storage[key] = value{
 		expire: time.Now().Unix() + int64(ttl.Seconds()),
 		value:  val,
@@ -27,6 +32,7 @@ func (c *Cache) Set(key string, val any, ttl time.Duration) {
 }
 
 func (c *Cache) Get(key string) (any, error) {
+
 	val, ok := c.storage[key]
 	if ok {
 		if time.Now().Unix() > c.storage[key].expire {
@@ -41,5 +47,8 @@ func (c *Cache) Get(key string) (any, error) {
 }
 
 func (c *Cache) Delete(key string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	delete(c.storage, key)
 }
